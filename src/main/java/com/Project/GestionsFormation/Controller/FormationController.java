@@ -9,4 +9,5 @@ public class FormationController {
     public String home() {
      return "homePage";
     }
+
 }

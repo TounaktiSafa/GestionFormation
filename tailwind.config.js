@@ -1,7 +1,9 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
-    "./src/main/resources/templates/**/*.html", // Pour les fichiers Thymeleaf HTML
+    "./src/main/resources/templates/**/*.html",
+    "./src/**/*.{html,js}", // Assurez-vous que cela couvre le chemin de votre fichier HTML
+    "./*.html",// Pour les fichiers Thymeleaf HTML
    ],
   theme: {
     extend: {
