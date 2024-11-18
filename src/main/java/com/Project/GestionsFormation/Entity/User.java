@@ -2,6 +2,8 @@ package com.Project.GestionsFormation.Entity;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 @Table(name="Utilisateur",uniqueConstraints =@UniqueConstraint(columnNames = "email"))
 public class User {
@@ -13,6 +15,22 @@ public class User {
     private String email;
     private String password;
     private String role;
+    //un seul formateur -> plusierus formation
+    @OneToMany(mappedBy = "formateur") // Référence à l'attribut "formateur" dans Formation
+    private List<Formation> formationsAnimees;
+
+    @ManyToMany(mappedBy = "employees") // Référence à l'attribut "employees" dans Formation
+    private List<Formation> formationsInscrites;
+
+    @Override
+    public String toString() {
+        return
+
+                 lastname   +
+                "  " + firstname  + "\n"
+
+                  ;
+    }
 
     public User() {
         super();
@@ -25,6 +43,7 @@ public class User {
         this.email = email;
         this.password = password;
         this.role = role;
+
     }
 
     public void setId(Long id) {
