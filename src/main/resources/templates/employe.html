@@ -3,8 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+
 </head>
 <body>
-<h1>employee page</h1>
+<nav class="bg-pink-900 py-2">
+    <div class="container ml-2 flex justify-between items-center">
+        <!-- Back Button -->
+        <div>
+            <a
+                    class="flex items-center bg-neutral-50 rounded px-4 py-2 text-sm font-medium text-pink-900 border-2 border-customRed shadow hover:text-customRed focus:outline-none focus:ring active:text-red-500"
+                    href="/"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-4 h-4 mr-2">
+                    <path fill-rule="evenodd" d="M14 8a.75.75 0 0 1-.75.75H4.56l1.22 1.22a.75.75 0 1 1-1.06 1.06l-2.5-2.5a.75.75 0 0 1 0-1.06l2.5-2.5a.75.75 0 0 1 1.06 1.06L4.56 7.25h8.69A.75.75 0 0 1 14 8Z" clip-rule="evenodd" />
+                </svg>
+                Page d'Accueil
+            </a>
+        </div>
+
+        <!-- Desktop Menu -->
+        <div class="hidden sm:flex space-x-4">
+            <a href="/employeformation" class="text-neutral-50 hover:text-white rounded-md px-3 py-2 sm:my-0 my-2">Consulter les formations disponibles</a>
+            <a href="" class="text-neutral-50 hover:text-white rounded-md px-3 py-2 sm:my-0 my-2">Suivre Les demandes d'Inscription</a>
+            <a href="" class="text-neutral-50 hover:text-white rounded-md px-3 py-2  sm:my-0 my-2">Accéder a Votre espace de Cours</a>
+        </div>
+
+        <!-- Mobile Menu Button -->
+        <div class="sm:hidden">
+            <button id="mobile-menu-button" class="text-neutral-50 hover:text-white focus:outline-none">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="hidden sm:hidden">
+        <a href="" class="block text-neutral-50 hover:bg-pink-700 hover:text-white px-3 py-2 rounded-md">Consulter les formations disponibles</a>
+        <a href="" class="block text-neutral-50 hover:bg-pink-700 hover:text-white px-3 py-2 rounded-md">Suivre Les demandes d'Inscription</a>
+        <a href="" class="block text-neutral-50 hover:bg-pink-700 hover:text-white px-3 py-2 rounded-md">Accéder a Votre espace de cours</a>
+    </div>
+</nav>
+
+
+
+
 </body>
 </html>

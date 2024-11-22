@@ -10,7 +10,12 @@ public class FormationDTO {
     private int id;
 
     private String title;
+    private String description;
+    private String status;
 
+    // plusieurs formations -> un seul formateur
+    // Liaison avec User pour le formateur
+    private User formateur;
     public User getFormateur() {
         return formateur;
     }
@@ -51,10 +56,5 @@ public class FormationDTO {
         this.description = description;
     }
 
-    private String description;
-    private String status;
 
-    // plusieurs formations -> un seul formateur
-   // Liaison avec User pour le formateur
-    private User formateur;
 }

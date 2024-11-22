@@ -16,7 +16,8 @@ public class Formation {
     private String title;
     private String description;
     private String status;
-
+    private String demandeEmp;
+    private int evaluate;
     // Relation plusieurs formations -> un seul formateur
     @ManyToOne
     @JoinColumn(name = "formateur_id", nullable = false) // Clé étrangère vers l'utilisateur formateur
@@ -36,13 +37,15 @@ public class Formation {
     }
 
     // Constructeur avec arguments
-    public Formation(int id, String title, String description, String status, User formateur, List<User> employees) {
+    public Formation(int id, String title, String description, String status,String demandeEmp,int evaluate, User formateur, List<User> employees) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.status = status;
         this.formateur = formateur;
         this.employees = employees;
+        this.evaluate = evaluate;
+        this.demandeEmp = demandeEmp;
     }
 
     // Getters et Setters
@@ -93,4 +96,12 @@ public class Formation {
     public void setEmployees(List<User> employees) {
         this.employees = employees;
     }
+    public int getEvaluate() {
+        return evaluate;
+    }
+    public void setEvaluate(int evaluate) {}
+    public String getDemandeEmp() {
+        return demandeEmp;
+    }
+    public void setDemandeEmp(String demandeEmp) {}
 }

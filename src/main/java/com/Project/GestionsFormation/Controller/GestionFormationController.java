@@ -5,10 +5,7 @@ import com.Project.GestionsFormation.Service.FormationService;
 import com.Project.GestionsFormation.dto.FormationDTO;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -20,13 +17,20 @@ public class GestionFormationController {
         this.formationService = formationService;
     }
 
+
     @GetMapping("/GestionFormation")
 public String listFormation(Model model) {
         List< FormationDTO> formation = formationService.findAllFormation();
    model.addAttribute("formation", formation);
+
     return "GestionFormation";
 
     }
+
+
+
+
+
 
     @GetMapping("/CreerFormation")
   public String CréerFormation(Model model) {

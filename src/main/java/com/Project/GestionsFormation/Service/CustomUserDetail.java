@@ -53,4 +53,7 @@ public String getFirstName() {
     public boolean isEnabled() {
         return true;
     }
+    public Long getId() {
+        return user.getId();
+    }
 }

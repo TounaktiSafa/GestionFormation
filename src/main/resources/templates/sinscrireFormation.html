@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Inscription Formation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+<div class="flex justify-center items-center w-screen h-screen bg-white">
+    <div class="container mx-auto my-4 px-4 lg:px-20">
+        <div th:if="${message}" class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400" role="alert">
+            <span class="font-medium">Success alert!</span> <span th:text="${message}"></span>
+        </div>
+
+        <div th:if="${error}" class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
+            <span class="font-medium">Error alert!</span> <span th:text="${error}"></span>
+        </div>
+
+        <div class="w-full p-8 my-4 md:px-12 lg:w-9/12 lg:pl-20 lg:pr-40 mr-auto rounded-2xl shadow-2xl">
+            <!-- Formulaire d'inscription -->
+            <form th:action="@{/inscrire/{formationId}(formationId=${formation.id})}" th:object="${employee}" method="post">
+                <div class="flex">
+                    <h1 class="tracking-tight text-gray-900 text-left py-2 pb-0 sm:text-5xl uppercase">
+                        Rejoignez <br /> nous
+                    </h1>
+                </div>
+                <div class="grid grid-cols-1 gap-5 md:grid-cols-2 mt-5">
+
+                    <!-- Titre de la formation -->
+                    <div>
+                        <label for="formationTitle" class="block text-sm font-medium text-gray-700">Titre de la Formation</label>
+                        <input id="formationTitle" class="w-full bg-gray-100 text-gray-900 mt-2 p-3 rounded-lg focus:outline-none focus:shadow-outline"
+                               type="text" readonly th:value="${formation.title}" placeholder="Titre de la Formation" />
+                    </div>
+
+                    <!-- Nom de l'employé -->
+                    <div>
+                        <label for="firstName" class="block text-sm font-medium text-gray-700">Nom</label>
+                        <input id="firstName" class="w-full bg-gray-100 text-gray-900 mt-2 p-3 rounded-lg focus:outline-none focus:shadow-outline"
+                               th:field="*{firstName}" type="text" name="employeeId" placeholder="Entrer votre Nom" required />
+                    </div>
+
+                    <!-- Prénom de l'employé -->
+                    <div>
+                        <label for="lastName" class="block text-sm font-medium text-gray-700">Prénom</label>
+                        <input id="lastName" class="w-full bg-gray-100 text-gray-900 mt-2 p-3 rounded-lg focus:outline-none focus:shadow-outline"
+                               th:field="*{lastName}" type="text" name="employeeName" placeholder="Entrer votre Prénom" required />
+                    </div>
+
+                    <!-- Email de l'employé -->
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                        <input id="email" class="w-full bg-gray-100 text-gray-900 mt-2 p-3 rounded-lg focus:outline-none focus:shadow-outline"
+                               th:field="*{email}" type="email" name="employeeEmail" placeholder="Entrer votre Email" required />
+                    </div>
+
+                </div>
+
+                <div class="my-2 w-1/2 lg:w-1/4 mt-12 center">
+                    <button type="submit" class="uppercase text-sm font-bold tracking-wide bg-pink-900 text-gray-100 p-3 rounded-lg w-full focus:outline-none focus:shadow-outline">
+                        S'inscrire
+                    </button>
+                </div>
+
+            </form>
+        </div>
+
+        <div class="w-full lg:-mt-96 lg:w-2/6 px-8 py-12 ml-auto bg-pink-900 rounded-2xl">
+            <div class="flex flex-col text-white">
+                <h1 class="font-bold uppercase text-4xl my-4">Inscrivez-vous !</h1>
+                <p class="text-neutral-50 leading-loose">
+                    Cette formation vous permettra d'acquérir de nouvelles connaissances utiles dans votre travail quotidien.
+                    <br>
+                    Développez vos compétences et votre réseau. Ne manquez pas cette opportunité !
+                </p>
+                <div class="flex my-4 w-2/3 lg:w-1/2">
+                    <div class="flex flex-col">
+                        <h2 class="text-2xl">On est situé à</h2>
+                        <p class="text-gray-400">Tunis, Tunisie</p>
+                    </div>
+                </div>
+                <div class="flex my-4 w-2/3 lg:w-1/2">
+                    <div class="flex flex-col">
+                        <h2 class="text-2xl">Contactez-nous !</h2>
+                        <p class="text-gray-400">Tel: +216 55 045 025</p>
+                    </div>
+                </div>
+
+            </div>
+            <a href="/employeformation"
+               class="relative inline-flex p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 dark:text-white">
+    <span class="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0">
+        Découvrir Toutes Nos Formations Disponibles
+    </span>
+            </a>
+
+
+        </div>
+
+    </div>
+</div>
+</body>
+</html>
