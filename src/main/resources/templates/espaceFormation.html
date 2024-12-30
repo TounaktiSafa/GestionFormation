@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formation - Formateur</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.4.0/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+</head>
+<body>
+<div class="container mx-auto my-10">
+    <h2 class="text-2xl font-bold text-gray-800" id="formationTitle"></h2>
+    <p class="mt-4 text-gray-600">Bienvenue dans votre espace de formation</p>
+</div>
+<div id="username-page" class="container">
+    <div class="row">
+        <div class="col-md-4 offset-md-4">
+            <form id="usernameForm" name="usernameForm">
+                <div class="form-group">
+                    <input type="text" id="name" placeholder="Username" autocomplete="off" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary btn-block">Start Chatting</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="video-call" class="container mb-4">
+    <div class="row">
+        <div class="col-md-12">
+            <h3 class="text-center">Animer Votre Formation</h3>
+            <div class="video-container">
+                <video id="localVideo" autoplay muted style="width: 100%; max-height: 300px; border: 2px solid "></video>
+            </div>
+            <div class="text-center mt-2">
+                <button id="startCall" class="btn btn-success">Start Call</button>
+                <button id="endCall" class="btn btn-danger">End Call</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div id="chat-page" class="container d-none">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <h2 class="text-center">Poser Vos Questions</h2>
+            <div id="chat" class="border rounded p-3" style="height: 300px; overflow-y: scroll;"></div>
+            <form id="messageForm" name="messageForm" class="mt-3">
+                <div class="form-group">
+                    <div class="input-group">
+                        <input type="text" id="message" placeholder="Type a message..." autocomplete="off" class="form-control"/>
+                        <div class="input-group-append">
+                            <button class="btn btn-primary" type="submit">Send</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    var stompClient = null;
+    var username = null;
+
+    function connect(event) {
+        username = $("#name").val().trim();
+
+        if (username) {
+            var socket = new SockJS('/chat-app');
+            stompClient = Stomp.over(socket);
+            stompClient.connect({}, onConnected, onError);
+        }
+        event.preventDefault();
+    }
+
+    function onConnected() {
+        console.log("Connected to WebSocket server"); // Ajoutez ce log
+        stompClient.subscribe('/topic/public', onMessageReceived);
+        stompClient.send("/app/chat.addUser ", {}, JSON.stringify({ userName: username, messageType: 'JOIN' }));
+        $("#username-page").addClass('d-none');
+        $("#chat-page").removeClass('d-none');
+    }
+    function onError(error) {
+        console.log('Could not connect to WebSocket server. Please refresh this page to try again!');
+    }
+
+    function sendMessage(event) {
+        var messageContent = $("#message").val().trim();
+        if(messageContent && stompClient) {
+            var chatMessage = {
+                userName: username,
+                message: messageContent,
+                messageType: 'CHAT'
+            };
+            stompClient.send("/app/chat.sendChatMessage", {}, JSON.stringify(chatMessage)); // Assurez-vous que cela correspond à votre @MessageMapping
+            $("#message").val('');
+        }
+        event.preventDefault();
+    }
+
+    function onMessageReceived(payload) {
+        const message = JSON.parse(payload.body);
+        console.log("Message received: ", message); // Log pour debug
+
+        // Empêcher les doublons en vérifiant les messages précédents
+        const chatElement = $("#chat");
+        const existingMessages = chatElement.find(`div:contains("${message.userName}")`);
+
+        // Si le message est déjà affiché, ignorez-le
+        if (existingMessages.length > 0 && message.messageType === 'JOIN') {
+            return;
+        }
+
+        const messageElement = $('<div>');
+
+        if (message.messageType === 'JOIN') {
+            messageElement.addClass('text-center text-muted small');
+            messageElement.text(message.userName + ' joined the chat');
+        } else if (message.messageType === 'LEAVE') {
+            messageElement.addClass('text-center text-muted small');
+            messageElement.text(message.userName + ' left the chat');
+        } else {
+            messageElement.append('<strong>' + message.userName + ': </strong>');
+            messageElement.append(message.message);
+        }
+
+        chatElement.append(messageElement);
+        chatElement.scrollTop(chatElement[0].scrollHeight);
+    }
+
+
+
+    $(document).ready(function() {
+        $("#usernameForm").on('submit', connect);
+        $("#messageForm").on('submit', sendMessage);
+    });
+    var localStream = null;
+    var peerConnection = null;
+    var stompClient = null;
+    var username = null;
+
+    const servers = { iceServers: [{ urls: "stun:stun.l.google.com:19302" }] };
+
+    let isConnected = false;
+
+    function connect(event) {
+        if (isConnected) {
+            console.log("Already connected.");
+            event.preventDefault();
+            return;
+        }
+
+        username = $("#name").val().trim();
+
+        if (username) {
+            const socket = new SockJS('/chat-app');
+            stompClient = Stomp.over(socket);
+            stompClient.connect({}, () => {
+                isConnected = true; // Marquer comme connecté
+                onConnected();
+            }, onError);
+        }
+        event.preventDefault();
+    }
+
+
+
+    function onConnected() {
+        console.log("Connected to WebSocket server");
+
+        if (!stompClient) return;
+
+        // Initialisez les abonnements s'ils n'existent pas
+        if (!stompClient.subscriptions) stompClient.subscriptions = {};
+
+        // Abonnez-vous uniquement si cela n'a pas été fait
+        if (!stompClient.subscriptions['/topic/public']) {
+            stompClient.subscriptions['/topic/public'] = stompClient.subscribe('/topic/public', onMessageReceived);
+        }
+        if (!stompClient.subscriptions['/video/offer']) {
+            stompClient.subscriptions['/video/offer'] = stompClient.subscribe('/video/offer', onOfferReceived);
+        }
+        if (!stompClient.subscriptions['/video/answer']) {
+            stompClient.subscriptions['/video/answer'] = stompClient.subscribe('/video/answer', onAnswerReceived);
+        }
+        if (!stompClient.subscriptions['/video/ice']) {
+            stompClient.subscriptions['/video/ice'] = stompClient.subscribe('/video/ice', onIceCandidateReceived);
+        }
+
+        // Envoyer l'événement d'ajout d'utilisateur
+        stompClient.send("/app/chat.addUser",
+            {},
+            JSON.stringify({ userName: username, messageType: 'JOIN' })
+        );
+
+        $("#username-page").addClass('d-none');
+        $("#chat-page").removeClass('d-none');
+    }
+
+
+
+    function startVideoCall() {
+        if (peerConnection) {
+            console.log("Call already in progress.");
+            return;
+        }
+
+        navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+            .then(stream => {
+                localStream = stream;
+                document.getElementById("localVideo").srcObject = stream;
+
+                peerConnection = new RTCPeerConnection(servers);
+
+                stream.getTracks().forEach(track => peerConnection.addTrack(track, stream));
+
+                peerConnection.onicecandidate = event => {
+                    if (event.candidate) {
+                        stompClient.send("/app/video.ice", {}, JSON.stringify(event.candidate));
+                    }
+                };
+
+                peerConnection.ontrack = event => {
+                    const remoteVideo = document.getElementById("remoteVideo");
+                    if (!remoteVideo.srcObject || remoteVideo.srcObject.id !== event.streams[0].id) {
+                        remoteVideo.srcObject = event.streams[0];
+                    }
+                };
+
+                peerConnection.createOffer()
+                    .then(offer => {
+                        peerConnection.setLocalDescription(offer);
+                        stompClient.send("/app/video.offer", {}, JSON.stringify(offer));
+                    });
+            })
+            .catch(error => console.error("Error accessing media devices.", error));
+    }
+
+
+    function endVideoCall() {
+        if (peerConnection) {
+            peerConnection.close();
+            peerConnection = null;
+        }
+        const localVideo = document.getElementById("localVideo");
+        const remoteVideo = document.getElementById("remoteVideo");
+        localVideo.srcObject = null;
+        remoteVideo.srcObject = null;
+        if (localStream) {
+            localStream.getTracks().forEach(track => track.stop());
+        }
+    }
+
+
+    function onOfferReceived(payload) {
+        const offer = JSON.parse(payload.body);
+
+        if (!peerConnection) {
+            peerConnection = new RTCPeerConnection(servers);
+
+            peerConnection.onicecandidate = event => {
+                if (event.candidate) {
+                    stompClient.send("/app/video.ice", {}, JSON.stringify(event.candidate));
+                }
+            };
+
+            peerConnection.ontrack = event => {
+                const remoteVideo = document.getElementById("remoteVideo");
+                if (remoteVideo.srcObject !== event.streams[0]) {
+                    remoteVideo.srcObject = event.streams[0];
+                }
+            };
+
+            localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
+        }
+
+        peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
+        peerConnection.createAnswer()
+            .then(answer => {
+                peerConnection.setLocalDescription(answer);
+                stompClient.send("/app/video.answer", {}, JSON.stringify(answer));
+            });
+    }
+
+    function onAnswerReceived(payload) {
+        const answer = JSON.parse(payload.body);
+        peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
+    }
+
+    function onIceCandidateReceived(payload) {
+        const candidate = JSON.parse(payload.body);
+        peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
+    }
+
+    $(document).ready(function () {
+        $("#usernameForm").on('submit', connect);
+        $("#messageForm").on('submit', sendMessage);
+        $("#startCall").on('click', startVideoCall);
+        $("#endCall").on('click', endVideoCall);
+    });
+</script>
+</body>
+</html>

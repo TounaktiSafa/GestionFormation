@@ -7,6 +7,7 @@ public class UserDTO {
     private String password;
     private String role;
 
+
     public String getFirstname() {
         return firstname;
     }
@@ -49,6 +50,7 @@ public class UserDTO {
 
     public UserDTO(String lastname, String email, String password, String role, String firstname) {
         this.lastname = lastname;
+        
         this.email = email;
         this.password = password;
         this.role = role;

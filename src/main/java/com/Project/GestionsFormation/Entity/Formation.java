@@ -16,8 +16,9 @@ public class Formation {
     private String title;
     private String description;
     private String status;
-    private String demandeEmp;
+
     private int evaluate;
+    private int progression;
     // Relation plusieurs formations -> un seul formateur
     @ManyToOne
     @JoinColumn(name = "formateur_id", nullable = false) // Clé étrangère vers l'utilisateur formateur
@@ -37,7 +38,7 @@ public class Formation {
     }
 
     // Constructeur avec arguments
-    public Formation(int id, String title, String description, String status,String demandeEmp,int evaluate, User formateur, List<User> employees) {
+    public Formation(int id, String title, String description, String status,int evaluate,int progression, User formateur, List<User> employees) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -45,7 +46,8 @@ public class Formation {
         this.formateur = formateur;
         this.employees = employees;
         this.evaluate = evaluate;
-        this.demandeEmp = demandeEmp;
+        this.progression = progression;
+
     }
 
     // Getters et Setters
@@ -100,8 +102,12 @@ public class Formation {
         return evaluate;
     }
     public void setEvaluate(int evaluate) {}
-    public String getDemandeEmp() {
-        return demandeEmp;
+
+    public int getProgression() {
+        return progression;
     }
-    public void setDemandeEmp(String demandeEmp) {}
+
+    public void setProgression(int progression) {
+        this.progression = progression;
+    }
 }

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Formations Complétées</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+<div class="container mx-auto my-10">
+  <h1 class="mb-4 text-3xl font-bold text-gray-900">Vos Formations Complétées</h1>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <!-- Boucle sur les formations complétées -->
+    <div th:each="formation : ${completedCourses}" class="max-w-sm p-6 bg-white border rounded-lg shadow">
+      <h5 th:text="${formation.title}" class="mb-2 text-2xl font-bold"></h5>
+      <p th:text="${formation.description}" class="mb-3 text-gray-700"></p>
+
+      <!-- Bouton pour télécharger l'attestation -->
+      <button
+              th:attr="onclick='downloadAttestation(${employeeId}, ${formation.id})'"
+              class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+        Télécharger l'attestation
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  function downloadAttestation(employeeId, formationId) {
+    fetch(`/employee/download-attestation?employeeId=${employeeId}&formationId=${formationId}`)
+            .then(response => {
+              if (!response.ok) {
+                throw new Error('Erreur lors du téléchargement de l\'attestation');
+              }
+              return response.blob();
+            })
+            .then(blob => {
+              const url = window.URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.style.display = 'none';
+              a.href = url;
+              a.download = 'attestation.txt';
+              document.body.appendChild(a);
+              a.click();
+              window.URL.revokeObjectURL(url);
+            })
+            .catch(error => {
+              console.error('Erreur:', error);
+              alert('Erreur lors du téléchargement de l\'attestation.');
+            });
+  }
+</script>
+</body>
+</html>

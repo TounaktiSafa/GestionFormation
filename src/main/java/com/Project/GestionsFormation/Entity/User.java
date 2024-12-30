@@ -26,10 +26,10 @@ public class User {
     public String toString() {
         return
 
-                 lastname   +
-                "  " + firstname  + "\n"
+                lastname   +
+                        "  " + firstname  + "\n"
 
-                  ;
+                ;
     }
 
     public User() {

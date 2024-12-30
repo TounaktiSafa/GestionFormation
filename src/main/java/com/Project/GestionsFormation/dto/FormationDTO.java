@@ -12,7 +12,7 @@ public class FormationDTO {
     private String title;
     private String description;
     private String status;
-
+    private int progression;
     // plusieurs formations -> un seul formateur
     // Liaison avec User pour le formateur
     private User formateur;
@@ -56,5 +56,8 @@ public class FormationDTO {
         this.description = description;
     }
 
-
+    public int getProgression() {
+        return progression;
+    }
+    public void setProgression(int progression) {}
 }

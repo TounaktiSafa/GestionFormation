@@ -8,15 +8,16 @@
 <body>
 <div class="flex justify-center items-center w-screen h-screen bg-white">
     <div class="container mx-auto my-4 px-4 lg:px-20">
-        <div th:if="${message}" class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400" role="alert">
-            <span class="font-medium">Success alert!</span> <span th:text="${message}"></span>
-        </div>
 
-        <div th:if="${error}" class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
-            <span class="font-medium">Error alert!</span> <span th:text="${error}"></span>
-        </div>
 
         <div class="w-full p-8 my-4 md:px-12 lg:w-9/12 lg:pl-20 lg:pr-40 mr-auto rounded-2xl shadow-2xl">
+            <div th:if="${message}" class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400" role="alert">
+                <span class="font-medium">Success alert!</span> <span th:text="${message}"></span>
+            </div>
+
+            <div th:if="${error}" class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
+                <span class="font-medium">Error alert!</span> <span th:text="${error}"></span>
+            </div>
             <!-- Formulaire d'inscription -->
             <form th:action="@{/inscrire/{formationId}(formationId=${formation.id})}" th:object="${employee}" method="post">
                 <div class="flex">

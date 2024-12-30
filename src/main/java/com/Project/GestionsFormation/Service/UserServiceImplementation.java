@@ -16,9 +16,15 @@ public class UserServiceImplementation implements UserService{
     @Override
 
     public User save(UserDTO userDTO) {
-        User user = new User(userDTO.getFirstname(),userDTO.getLastname(), userDTO.getEmail(),passwordEncoder.encode(userDTO.getPassword()) , userDTO.getRole());
+        // Do not pass id explicitly as it's auto-generated
+        User user = new User(
+                userDTO.getFirstname(),
+                userDTO.getLastname(),
+                userDTO.getEmail(),
+                passwordEncoder.encode(userDTO.getPassword()),
+                userDTO.getRole()
+        );
         return userRepository.save(user);
-
     }
 
 }
