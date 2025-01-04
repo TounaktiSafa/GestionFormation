@@ -43,6 +43,7 @@ public class SecuriyConfig {
                         .requestMatchers("/employe").hasAuthority("EMPLOYE")
                         .requestMatchers("/responsablerh").hasAuthority("RESPONSABLERH")
                         .requestMatchers("/prestataire").hasAuthority("PRESTATAIRE")
+                        .requestMatchers("/download-faster/**").permitAll()
                         .anyRequest().authenticated()                // All other URLs require authentication
                 )
 
@@ -70,5 +71,6 @@ public class SecuriyConfig {
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(customUserDetailServiceImplementation).passwordEncoder(passwordEncoder());
     }
-}
 
+
+}

@@ -19,7 +19,8 @@ public class Formation_employees {
 
     @Column(name = "demande_emp", nullable = true)
     private String demandeEmp;
-
+@Column(name = "evaluation")
+private Integer evaluation;
     // Default constructor
     public Formation_employees() {}
 
@@ -62,5 +63,11 @@ public class Formation_employees {
 
     public void setDemandeEmp(String demandeEmp) {
         this.demandeEmp = demandeEmp;
+    }
+    public Integer getEvaluation() {
+        return evaluation;
+    }
+    public void setEvaluation(Integer evaluation) {
+        this.evaluation = evaluation;
     }
 }

@@ -156,8 +156,28 @@ public class FormationEmployéServiceImplemantation implements FormationEmployeS
     }
 
 
+    @Override
+    public Formation_employees findByEmployeeIdAndFormationId(Long employeeId, Integer formationId) {
+        return formationEmployeesRepository
+                .findByEmployeeIdAndFormationId(employeeId, formationId)
+                .orElseThrow(() -> new IllegalArgumentException("Formation not found or not assigned to the employee."));
+    }
 
 
+
+@Override
+    public void saveEvaluation(Formation_employees formationEmployee, int rating) {
+        if (formationEmployee != null) {
+            formationEmployee.setEvaluation(rating); // Set the evaluation
+            formationEmployeesRepository.save(formationEmployee); // Save to the database
+        } else {
+            throw new RuntimeException("FormationEmployees record not found.");
+        }
+    }
+@Override
+    public void save(Formation_employees formationEmployee) {
+        formationEmployeesRepository.save(formationEmployee);
+    }
 
 
 }

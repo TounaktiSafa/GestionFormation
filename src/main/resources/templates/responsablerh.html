@@ -68,7 +68,6 @@
             </button>
         </div>
     </div>
-
     <!-- Mobile Menu -->
     <div id="mobile-menu" class="hidden sm:hidden">
         <a href="#Consuler-Compte" class="block text-neutral-50 hover:bg-pink-700 hover:text-white px-3 py-2 rounded-md">Consulter Compte</a>
@@ -275,7 +274,7 @@
     $(function () {
         // Show the modal
         $("#showNotifications").on("click", function () {
-            console.log("Bouton de notification cliqué"); // Log pour vérifier le clic
+            console.log("Bouton de notification cliqué");
             $("#notificationModal").removeClass("hidden");
             fetchCompletedFormations(); // Fetch completed formations when modal opens
         });
@@ -292,24 +291,66 @@
                 method: "GET",
                 success: function (data) {
                     const content = $("#notificationContent");
-                    content.empty(); // Clear previous content
+                    content.empty();
 
                     if (data.length === 0) {
-                        content.append("<p>Aucune formation n'est achevée pour l'instant.</p>");
+                        content.append("<p>Aucune formation achevée.</p>");
                     } else {
                         data.forEach(formation => {
-                            // Accédez à la propriété title de chaque formation
-                            content.append(`<p data-id="${formation.id}">La formation "${formation.title}" est achevée.</p>`);
+                            content.append(`
+                                <div class="mb-4" data-id="${formation.id}">
+                                    <p>La formation "${formation.title}" est achevée.</p>
+                                    <div class="rounded-md  px-3 py-2 text-sm font-medium text-white"> <a
+                class="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-full text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+                href="/telechargement"
+        >
+            Ajouter Une Attestation
+        </a></div>
+                                </div>
+                            `);
                         });
                     }
                 },
-                error: function (xhr, status, error) {
-                    console.error("Error fetching completed formations:", error);
+                error: function () {
                     $("#notificationContent").html("<p>Erreur lors de la récupération des notifications.</p>");
                 }
             });
         }
     });
+
+    // JS : Envoi du fichier via fetch
+    function uploadFile(formationId) {
+        const input = document.getElementById(`file_input_${formationId}`);
+        const file = input.files[0];
+
+        if (!file) {
+            alert('Veuillez sélectionner un fichier.');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('formationId', formationId);
+        formData.append('file', file);
+
+        fetch('/api/upload-attestation', {
+            method: 'POST',
+            body: formData,
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erreur lors de l\'envoi du fichier.');
+                }
+                return response.text();
+            })
+            .then(data => {
+                alert(data);
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                alert('Erreur lors de l\'envoi du fichier.');
+            });
+    }
+
 </script>
 
 </body>

@@ -17,8 +17,9 @@ public class Formation {
     private String description;
     private String status;
 
-    private int evaluate;
+
     private int progression;
+    private String attestationPath;
     // Relation plusieurs formations -> un seul formateur
     @ManyToOne
     @JoinColumn(name = "formateur_id", nullable = false) // Clé étrangère vers l'utilisateur formateur
@@ -38,16 +39,16 @@ public class Formation {
     }
 
     // Constructeur avec arguments
-    public Formation(int id, String title, String description, String status,int evaluate,int progression, User formateur, List<User> employees) {
+    public Formation(int id, String title, String description, String status, int progression, String AttestationPath, User formateur, List<User> employees) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.status = status;
         this.formateur = formateur;
         this.employees = employees;
-        this.evaluate = evaluate;
-        this.progression = progression;
 
+        this.progression = progression;
+        this.attestationPath = AttestationPath;
     }
 
     // Getters et Setters
@@ -98,10 +99,6 @@ public class Formation {
     public void setEmployees(List<User> employees) {
         this.employees = employees;
     }
-    public int getEvaluate() {
-        return evaluate;
-    }
-    public void setEvaluate(int evaluate) {}
 
     public int getProgression() {
         return progression;
@@ -109,5 +106,13 @@ public class Formation {
 
     public void setProgression(int progression) {
         this.progression = progression;
+    }
+
+    public String getAttestationPath() {
+        return attestationPath;
+    }
+
+    public void setAttestationPath(String attestationPath) {
+        attestationPath = attestationPath;
     }
 }

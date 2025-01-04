@@ -33,8 +33,112 @@
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11v4.833A1.166 1.166 0 0 1 13.833 17H2.167A1.167 1.167 0 0 1 1 15.833V4.167A1.166 1.166 0 0 1 2.167 3h4.618m4.447-2H17v5.768M9.111 8.889l7.778-7.778"/>
                 </svg>
             </a>
+            <div class="flex items-center mb-4" id="rating-container-${formationEmployee.formation.id}">
+    <span th:each="i : ${#numbers.sequence(1, 5)}"
+          th:attr="data-formation-id=${formationEmployee.formation.id}, data-rating=${i}"
+          class="star w-6 h-6 text-gray-400 cursor-pointer"
+          onclick="submitRating(this)">
+        ★
+    </span>
+                <p id="rating-message-${formationEmployee.formation.id}" class="ms-2 text-sm font-medium text-gray-500"></p>
+            </div>
+
+
+
         </div>
     </div>
 </div>
+<script>
+    function highlightStars(element) {
+        const stars = element.parentElement.querySelectorAll('.star');
+        const rating = parseInt(element.getAttribute('data-rating'));
+
+        stars.forEach(star => {
+            const starRating = parseInt(star.getAttribute('data-rating'));
+            if (starRating <= rating) {
+                star.classList.add('text-yellow-300');
+                star.classList.remove('text-gray-400');
+            } else {
+                star.classList.add('text-gray-400');
+                star.classList.remove('text-yellow-300');
+            }
+        });
+    }
+
+    function resetStars(element) {
+        const container = element.parentElement;
+        const currentRating = parseInt(container.getAttribute('data-current-rating'));
+
+        const stars = container.querySelectorAll('.star');
+        stars.forEach(star => {
+            const starRating = parseInt(star.getAttribute('data-rating'));
+            if (starRating <= currentRating) {
+                star.classList.add('text-yellow-300');
+                star.classList.remove('text-gray-400');
+            } else {
+                star.classList.add('text-gray-400');
+                star.classList.remove('text-yellow-300');
+            }
+        });
+    }
+
+    function submitRating(element) {
+        const formationId = element.getAttribute('data-formation-id');
+        const rating = element.getAttribute('data-rating');
+
+        if (!formationId || !rating) {
+            console.error("Missing formationId or rating.");
+            return;
+        }
+
+        fetch('/formation/evaluate', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                formationId: parseInt(formationId),
+                rating: parseInt(rating),
+            }),
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to submit rating');
+                }
+                return response.text();
+            })
+            .then(message => {
+                console.log(message);
+
+                // Update star colors based on the rating
+                const stars = document.querySelectorAll(
+                    `.star[data-formation-id="${formationId}"]`
+                );
+
+                stars.forEach(star => {
+                    const starRating = parseInt(star.getAttribute('data-rating'));
+                    if (starRating <= rating) {
+                        star.classList.add('text-yellow-300');
+                        star.classList.remove('text-gray-400');
+                    } else {
+                        star.classList.add('text-gray-400');
+                        star.classList.remove('text-yellow-300');
+                    }
+                });
+
+                // Display success message
+                const messageElement = document.getElementById(`rating-message-${formationId}`);
+                if (messageElement) {
+                    messageElement.textContent = "Merci pour votre évaluation!";
+                }
+            })
+            .catch(error => {
+                console.error('Error submitting rating:', error);
+            });
+    }
+
+
+
+</script>
 </body>
 </html>

@@ -24,6 +24,9 @@ public interface FormationEmployeesRepository extends JpaRepository<Formation_em
     List<Formation_employees> findByEmployeeAndDemandeEmp(User employee, String demandeEmp);
     Optional<Formation_employees> findById(FormationEmployeeId id);
     List<Formation_employees> findByFormationId(int formationId); // Ajoutez cette méthode
+    Optional<Formation_employees> findByEmployeeIdAndFormationId(Long employeeId, Integer formationId);
 
+    @Query("SELECT fe.formation FROM Formation_employees fe WHERE fe.employee.id = :employeeId")
+    List<Formation> findFormationsByEmployeeId(@Param("employeeId") Long employeeId);
 
 }

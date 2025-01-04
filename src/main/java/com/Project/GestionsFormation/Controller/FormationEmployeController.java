@@ -7,6 +7,7 @@ import com.Project.GestionsFormation.Service.CustomUserDetail;
 import com.Project.GestionsFormation.Service.FormationEmployeService;
 import com.Project.GestionsFormation.Service.FormationService;
 import com.Project.GestionsFormation.dto.FormationEmplyeDTO;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -16,6 +17,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,15 +69,6 @@ public class FormationEmployeController {
     }
 
 
-
-
-
-
-
-
-
-
-
     @GetMapping("/demande-formation")
     public String getFormationEmployees(Model model) {
         List<Formation_employees> formationEmployees = formationEmployeService.getAllFormationEmployees();
@@ -84,7 +77,7 @@ public class FormationEmployeController {
         // Ajouter des messages si nécessaire
         model.addAttribute("message", "Voici vos demandes de formation.");
         // Ou pour les erreurs
-         model.addAttribute("error", "Une erreur est survenue.");
+        model.addAttribute("error", "Une erreur est survenue.");
 
         return "demandeFormation"; // Thymeleaf template name
     }
@@ -125,6 +118,7 @@ public class FormationEmployeController {
 
         return "employeeFormations"; // Page Thymeleaf pour l'affichage
     }
+
     @GetMapping("/formations-acceptes")
     public String showAcceptedFormations(Model model) {
         // Récupérer l'utilisateur connecté
@@ -270,20 +264,38 @@ public class FormationEmployeController {
         return "redirect:/formateur";
     }
 
+    @PostMapping("/formation/evaluate")
+    public ResponseEntity<String> evaluateFormation(@RequestBody Map<String, Object> payload) {
+        try {
+            // Parse payload
+            Integer formationId = Integer.parseInt(payload.get("formationId").toString());
+            Integer rating = Integer.parseInt(payload.get("rating").toString());
 
+            if (rating == null || rating < 1 || rating > 5) {
+                return ResponseEntity.badRequest().body("Invalid rating value.");
+            }
 
+            // Retrieve the authenticated employee
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            Long employeeId = ((CustomUserDetail) authentication.getPrincipal()).getId();
 
+            // Find the record in the `formation_employees` table
+            Formation_employees formationEmployee = formationEmployeService.findByEmployeeIdAndFormationId(employeeId, formationId);
 
+            if (formationEmployee == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Formation or employee not found.");
+            }
 
+            // Update the evaluation
+            formationEmployee.setEvaluation(rating);
+            formationEmployeService.save(formationEmployee);
 
-
-
-
-
-
-
-
-
+            return ResponseEntity.ok("Evaluation saved successfully.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal error occurred.");
+        }
+    }
 
 
 }

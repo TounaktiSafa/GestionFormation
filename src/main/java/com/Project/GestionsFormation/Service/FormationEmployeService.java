@@ -20,5 +20,7 @@ public interface FormationEmployeService {
     Formation_employees getFormationEmployee(int formationId, Long employeeId);
     Formation getFormationByFormateurId(int formationId, Long formateurId);
     List<Formation_employees> getCompletedFormationsWithEmployees();
-
+    Formation_employees findByEmployeeIdAndFormationId(Long employeeId, Integer formationId);
+    void saveEvaluation(Formation_employees formationEmployee, int rating);
+   void save(Formation_employees formationEmployee);
 }
