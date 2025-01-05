@@ -55,7 +55,8 @@ Formation formation = new Formation();
     }
     @GetMapping("/dashboard")
     public String dashboard(){
-        return "dashboard";
+
+        return "redirect:http://localhost:3000/dashboard/1#fullscreen";
     }
 
 
