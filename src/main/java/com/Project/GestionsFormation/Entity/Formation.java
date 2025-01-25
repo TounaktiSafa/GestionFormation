@@ -17,8 +17,9 @@ public class Formation {
     private String description;
     private String status;
 
-
+    @Column(name = "progression")
     private int progression;
+    @Column(name = "attestationPath", nullable = true)
     private String attestationPath;
     // Relation plusieurs formations -> un seul formateur
     @ManyToOne
